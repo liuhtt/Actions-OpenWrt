@@ -14,7 +14,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: lede
+  OPENWRT_NAME: liu_openwrt
   OPENWRT_NAME1: x86
 
 jobs:
