@@ -2,7 +2,7 @@ name: Openwrt_x86
 
 on:
   schedule:
-    - cron: 0 16 * * *
+    - cron: 0 06 * * *
   workflow_dispatch:
 
 env:
@@ -14,7 +14,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: Openwrt
+  OPENWRT_NAME: Openwrt_liuhtt
   OPENWRT_NAME1: x86
 
 jobs:
