@@ -19,6 +19,10 @@ env:
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
 
+# 添加权限配置
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -151,25 +155,35 @@ jobs:
         tag_name: ${{ env.date2 }}
         body_path: release.txt
 
-    - name: config文件上传自动更新1
-      run : |
+    - name: 配置git用户信息
+      run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-    - name: config文件上传自动更新2
+
+    - name: 克隆配置文件仓库
       run: |
         cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/${{ env.REPO }}.git main
-    - name: config文件上传自动更新3
+        git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.REPO }}.git main
+
+    - name: 更新config文件并推送
       run: |
+        # 复制配置文件
         cp ./openwrt/.config $GITHUB_WORKSPACE/main/${{ env.CONFIG_FILE }}
         cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/${{ env.CONFIG_BUILD }}
+        
+        # 进入仓库目录
         cd $GITHUB_WORKSPACE/main
+        
+        # 添加更改
         git add .
+        
+        # 检查是否有更改，如果有则提交并推送
         if git diff --cached --quiet; then
-          echo "nothing to commit"
+          echo "没有检测到配置更改，跳过提交"
         else
-          git commit -am "update $(date '+%Y-%m-%d %H:%M:%S')"
-          git push --quiet "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.REPO }}.git" HEAD:main
+          git commit -m "update $(date '+%Y-%m-%d %H:%M:%S')"
+          git push origin main
+          echo "配置文件已成功更新并推送"
         fi
 
     - name: 查看磁盘使用情况
